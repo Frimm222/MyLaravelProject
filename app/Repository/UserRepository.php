@@ -25,6 +25,7 @@ class UserRepository
             $user->email = $userStoreRequest->email;
             $user->password = Hash::make($userStoreRequest->password);
             $user->slug = Str::slug($user->name);
+            $user->role_id = 2;
             $user->save();
 
             if ($userStoreRequest->hasFile('avatar')) {

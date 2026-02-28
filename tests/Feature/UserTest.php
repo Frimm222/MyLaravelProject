@@ -9,6 +9,7 @@ use App\Models\PhoneBrand;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 use function PHPUnit\Framework\assertTrue;
@@ -62,12 +63,12 @@ class UserTest extends TestCase
         $email = Str::random() . '@example.com';
         $password = Str::random();
         $slug = Str::slug($name);
-
         $data = [
             'name' => $name,
             'email' => $email,
             'password' => $password,
             'password_confirmation' => $password,
+            'avatar' => Storage::fake('avatars'),
         ];
 
         $response = $this->post(route('api.users.store', $data));
@@ -76,7 +77,6 @@ class UserTest extends TestCase
             ->where('name', $name)
             ->where('slug', $slug)
             ->first();
-
         $response->assertStatus(201);
         $this->assertNotNull($user);
         $this->assertEquals($user->name, $name);
@@ -98,13 +98,13 @@ class UserTest extends TestCase
         $email = Str::random() . '@example.com';
         $password = Str::random();
         $slug = Str::slug($name);
-
         $data = [
             'name' => $name,
             'email' => $email,
             'password' => $password,
             'password_confirmation' => $password,
             'user' => $user->id,
+            'role_id'=> 2
         ];
 
         $response = $this->patch(route('api.users.update', $data));
@@ -117,5 +117,12 @@ class UserTest extends TestCase
         $this->assertEquals($user->slug, $slug);
         $this->assertEquals($user->email, $email);
         assertTrue(Hash::check($password, $user->password));
+    }
+
+    public function test_remove_user(): void
+    {
+        $user = User::factory()->create();
+        $response = $this->delete(route('api.users.destroy', $user));
+        $response->assertJson(['status' => 'success']);
     }
 }

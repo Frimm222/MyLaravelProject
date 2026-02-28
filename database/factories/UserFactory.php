@@ -22,7 +22,8 @@ class UserFactory extends Factory
             'active' => rand(0, 1),
             'age' => rand(10, 70),
             'slug' => Str::slug($name),
-            'created_at' => fake()->dateTime()
+            'created_at' => fake()->dateTime(),
+            'role_id'=> 2
         ];
     }
 
