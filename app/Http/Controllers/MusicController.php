@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Genre;
 use App\Models\Music;
 use App\Services\CacheService;
 use App\Services\MusicService;
@@ -23,16 +24,33 @@ class MusicController extends Controller
     {
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('music.index', [
-            'tracks' => $this->cacheService
-                ->paginateCache(
-                    'music_page_' . request()->get('page', 1),
-                    new Music()
-                ),
-            'pageTitle' => 'All Musics',
-        ]);
+        $query = Music::query()
+            ->where('is_published', true)
+            ->with(['genre']);
+        // Поиск по названию или артистам
+        if ($search = trim($request->get('search'))) {
+            $like = '%' . strtolower($search) . '%';
+
+            $query->where(function ($q) use ($like) {
+                $q->whereRaw('LOWER(title) LIKE ?', [$like])
+                    ->orWhereRaw('LOWER(artists) LIKE ?', [$like]);
+            });
+        }
+
+        // Фильтр по жанру
+        if ($genreValue = $request->input('genre')) {
+            $query->whereHas('genre', fn($q) => $q->where('value', $genreValue));
+        }
+
+        $tracks = $query->latest()->paginate(10);
+
+        // Список жанров для фильтра
+        $genres = Genre::orderBy('label')
+            ->pluck('label', 'value')
+            ->toArray();
+        return view('music.index', compact('tracks', 'genres'));
     }
 
     public function create(): View

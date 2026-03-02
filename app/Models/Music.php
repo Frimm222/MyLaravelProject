@@ -6,7 +6,9 @@ use App\MusicGenre;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * @property string $title
@@ -53,7 +55,21 @@ class Music extends Model
     public function setArtistsAttribute(mixed $artists): void
     {
         if (is_string($artists)) {
-            $this->attributes['artists'] = json_encode(explode(',', $artists));
+            $this->attributes['artists'] = json_encode([
+                $artists
+            ]);
+        }else{
+            $this->attributes['artists'] = json_encode($artists);
         }
+    }
+
+    public function comments(): MorphToMany
+    {
+        return $this->morphToMany(Comment::class, 'commentgable');
+    }
+
+    public function genre(): BelongsTo
+    {
+        return $this->belongsTo(Genre::class);
     }
 }

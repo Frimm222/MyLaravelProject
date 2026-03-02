@@ -2,19 +2,41 @@
 
 namespace Database\Seeders;
 
+use App\Models\Comment;
+use App\Models\Genre;
 use App\Models\Music;
+use App\Models\Role;
 use App\Models\User;
 use App\MusicGenre;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MusicSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::query()->where('email', 'admin@mail.ru')->firstOrFail();
+        /** @var User $user */
+        $user = User::query()
+            ->where('email', 'admin@mail.ru')
+            ->firstOrFail();
 
+        /** @var array $users */
+        $users = User::query()
+            ->where(
+                'role_id',
+                Role::query()
+                    ->where('slug', 'user')
+                ->firstOrFail()
+                    ->id
+            )->get()
+            ->toArray();
+
+
+        $genreRockId = Genre::query()->where('value', MusicGenre::ROCK)->firstOrFail()->id;
+        $genrePopId = Genre::query()->where('value', MusicGenre::POP)->firstOrFail()->id;
         $musics = [
             [
                 'title' => '18 Мне Уже',
@@ -27,7 +49,7 @@ class MusicSeeder extends Seeder
                 'release_date' => Carbon::now()->toDateTimeString(),
                 'is_published' => true,
                 'plays' => 0,
-                'genre' => MusicGenre::POP,
+                'genre_id' => $genrePopId,
             ],
             [
                 'title' => 'Руки Вверх - Он Тебя Целует',
@@ -40,7 +62,7 @@ class MusicSeeder extends Seeder
                 'release_date' => Carbon::now()->toDateTimeString(),
                 'is_published' => true,
                 'plays' => 0,
-                'genre' => MusicGenre::POP,
+                'genre_id' => $genrePopId,
             ],
             [
                 'title' => 'Группа крови',
@@ -53,7 +75,7 @@ class MusicSeeder extends Seeder
                 'release_date' => Carbon::now()->toDateTimeString(),
                 'is_published' => true,
                 'plays' => 0,
-                'genre' => MusicGenre::ROCK,
+                'genre_id' =>  $genreRockId,
             ],
             [
                 'title' => 'Виктор Цой - Звезда по имени Солнце.mp3',
@@ -66,18 +88,28 @@ class MusicSeeder extends Seeder
                 'release_date' => Carbon::now()->toDateTimeString(),
                 'is_published' => true,
                 'plays' => 0,
-                'genre' => MusicGenre::ROCK,
+                'genre_id' => $genreRockId,
             ],
         ];
 
         foreach ($musics as $music) {
+            $randInt = random_int(1, count($users));
             $music['file_path'] = $this->fileMv($music['file_path'], 'music');
             $music['cover_path'] = $this->fileMv($music['cover_path'], 'cover');
 
            $music = Music::query()->firstOrCreate([
                 'title' => $music['title'],
-                'genre' => $music['genre'],
+                'genre_id' => $music['genre_id'],
             ], $music);
+
+           for ($i = 0; $i < $randInt; $i++) {
+               $comment = new Comment([
+                   'user_id' => $users[$i]['id'],
+                   'comment' => Str::random(40)
+               ]);
+               $comment->save();
+               $music->comments()->attach($comment->id);
+           }
 
            $user->musics()->attach($music->id);
         }

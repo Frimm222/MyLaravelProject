@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('music', function (Blueprint $table) {
             $table->id();
+            $table->string('genre_id', 36);
             $table->json('artists')->nullable();
             $table->string('file_path');
             $table->string('cover_path')->nullable();
@@ -18,7 +19,6 @@ return new class extends Migration
             $table->dateTime('release_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->boolean('is_published')->default(true);
             $table->unsignedInteger('plays');
-            $table->string('genre');
             $table->timestamps();
         });
     }

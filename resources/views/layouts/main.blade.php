@@ -57,9 +57,9 @@
                     Пользователи
                 </a>
                 @endif
-                <a href="#"
+                <a href="{{ route('music.index') }}"
                    class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition">
-                    Настройки
+                    Музыка
                 </a>
                 <a href="{{ route('favorites.index') }}"
                    class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition">

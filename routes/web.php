@@ -16,7 +16,7 @@ Route::middleware('auth')->group(function(){
     // MUSIC CONTROLLER
     Route::prefix('music')->name('music.')->group(function () {
         Route::get('', [MusicController::class, 'index'])->name('index');
-        Route::get('create', [MusicController::class, 'create'])->name('create');
+        Route::get('create', [MusicController::class, 'create'])->name('create')->middleware(CheckStatusForAdminMiddleware::class);
         Route::get('{music}', [MusicController::class, 'show'])->name('show');
         Route::delete('{music}', [MusicController::class, 'delete'])->name('delete')->middleware(CheckStatusForAdminMiddleware::class);
         Route::get('{music}/edit', [MusicController::class, 'edit'])->name('edit')->middleware(CheckStatusForAdminMiddleware::class);
