@@ -6,6 +6,7 @@ use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\Avatar;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -50,7 +51,11 @@ class UserRepository
         $validated = $userUpdateRequest->validated();
         $user->name = $validated['name'];
         $user->email = $validated['email'];
-
+        if(auth()->user()->isAdmin()){
+            if(auth()->user()->id != $user->id){
+                $user->role_id = $userUpdateRequest['role'];
+            }
+        }
         if (!empty($validated['password'])) {
             $user->password = $validated['password'];
         }

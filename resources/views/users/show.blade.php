@@ -123,6 +123,30 @@
                                           focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2.5">
                             </div>
 
+                            <!-- Роли -->
+                            @if (auth()->user()->isAdmin())
+                                <div>
+                                    <label for="role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Роль
+                                    </label>
+                                    <select
+                                        name="role"
+                                        id="role"
+                                        class="block w-full rounded-lg border-gray-300 dark:border-gray-600
+                                       dark:bg-gray-700 dark:text-white shadow-sm
+                                       focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2.5
+                                       @error('role') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                    >
+                                        <option value="2"  {{ old('role_id', $user->role_id) === 'user'  ? 'selected' : '' }}>Пользователь</option>
+                                        <option value="1" {{ old('role_id', $user->role_id) === 'admin' ? 'selected' : '' }}>Администратор</option>
+                                    </select>
+
+                                    @error('role')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            @endif
+
                             <!-- Кнопки -->
                             <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                                 <a href="{{ route('users.index') }}"
