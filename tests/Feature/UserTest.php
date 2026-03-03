@@ -8,6 +8,7 @@ use App\Models\Phone;
 use App\Models\PhoneBrand;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -87,6 +88,7 @@ class UserTest extends TestCase
 
     public function test_update_user(): void
     {
+        $this->actingAs(User::query()->first());
         $phoneBrand = PhoneBrand::factory()->create();
         $user = User::factory()->create();
         $phone = Phone::factory([
@@ -104,7 +106,7 @@ class UserTest extends TestCase
             'password' => $password,
             'password_confirmation' => $password,
             'user' => $user->id,
-            'role_id'=> 2
+            'role' => $user->role_id,
         ];
 
         $response = $this->patch(route('api.users.update', $data));
