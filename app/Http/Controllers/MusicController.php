@@ -50,7 +50,7 @@ class MusicController extends Controller
         $genres = Genre::orderBy('label')
             ->pluck('label', 'value')
             ->toArray();
-        return view('music.index', compact('tracks', 'genres'));
+        return view('music.index', compact('tracks' , 'genres'));
     }
 
     public function create(): View
