@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\MusicController;
@@ -32,4 +33,11 @@ Route::middleware('auth')->group(function(){
 
     // FAVORITE CONTROLLER
     Route::get('favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+
+    Route::prefix('music')->group(function () {
+        Route::get('/track/{track}/comments', [CommentController::class, 'index'])->name('music.comments.index');
+        Route::post('/track/{track}/comments', [CommentController::class, 'store'])->name('music.comments.store');
+        Route::put('/comments/{comment}', [CommentController::class, 'update'])->name('music.comments.update');
+        Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('music.comments.destroy');
+    });
 });

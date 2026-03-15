@@ -103,12 +103,13 @@ class MusicSeeder extends Seeder
             ], $music);
 
            for ($i = 0; $i < $randInt; $i++) {
-               $comment = new Comment([
+               $comments = new Comment([
+                   'music_id' => $music->id,
                    'user_id' => $users[$i]['id'],
-                   'comment' => Str::random(40)
+                   'text' => Str::random(40)
                ]);
-               $comment->save();
-               $music->comments()->attach($comment->id);
+               $comments->save();
+               //$music->comments()->attach($comments->id);
            }
 
            $user->musics()->attach($music->id);

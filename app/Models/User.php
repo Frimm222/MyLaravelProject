@@ -103,6 +103,11 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role->slug === 'admin';
@@ -112,4 +117,5 @@ class User extends Authenticatable
     {
         return $this->role->slug === 'user';
     }
+
 }

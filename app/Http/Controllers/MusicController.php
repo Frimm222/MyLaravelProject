@@ -79,7 +79,7 @@ class MusicController extends Controller
     public function show(Music $music): View
     {
         return view('music.show', [
-            'track' => $this->cacheService->singleCache('music_' . $music->id, $music),
+            'track' => $this->cacheService->singleCache('music_' . $music->id, $music->load('comments.user')),
         ]);
     }
 

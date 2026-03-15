@@ -45,6 +45,10 @@ class Music extends Model
     {
         return $this->belongsToMany(User::class);
     }
+    public function comments()
+    {
+        return $this->hasMany(Comment::class)->latest();
+    }
 
     public function isFavoritedBy(?User $user): bool
     {
@@ -62,12 +66,6 @@ class Music extends Model
             $this->attributes['artists'] = json_encode($artists);
         }
     }
-
-    public function comments(): MorphToMany
-    {
-        return $this->morphToMany(Comment::class, 'commentgable');
-    }
-
     public function genre(): BelongsTo
     {
         return $this->belongsTo(Genre::class);
